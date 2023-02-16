@@ -1,0 +1,1 @@
+# Cellular_automaton_generator_in_ternimal
