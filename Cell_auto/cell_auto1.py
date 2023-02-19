@@ -81,8 +81,8 @@ while x_count < y_count:
         empte_array.append(random_x)
 
         rule_number = random_x
-        size = 100
-        steps = 400
+        size = 100 #Wide
+        steps = 150 #Lenght
         init_cond = random.choice(['random', 'impulse'])
         impulse_pos = random.choice(['left', 'right', 'center'])
 
