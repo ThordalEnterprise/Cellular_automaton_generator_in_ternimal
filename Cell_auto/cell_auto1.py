@@ -11,50 +11,30 @@ warnings.filterwarnings("ignore")
 powers_of_two = np.array([[4], [2], [1]])  # shape (3, 1)
 
 x_count = 0
-while x_count < 10000:
+while x_count < 9999:
     try:
-        os.chdir("/Users/Jacob/Desktop/Cell_auto")
+        current_path = os.getcwd()
+        parent_directory = os.path.abspath(os.path.join(current_path, os.pardir))
+        if "Collection_1" in current_path:
+            os.chdir(parent_directory)
+
         def step(x, rule_binary):
-            """Makes one step in the cellular automaton.
 
-            Args:
-                x (np.array): current state of the automaton
-                rule_binary (np.array): the update rule
-
-            Returns:
-                np.array: updated state of the automaton
-            """
             x_shift_right = np.roll(x,  1)  # circular shift to right <3 kan edits
             x_shift_left = np.roll(x, -1)  # circular shift to left <3 kan edits
-            y = np.vstack((x_shift_right, x, x_shift_left)).astype(np.int8)  # stack row-wise, shape (3, cols)
-            z = np.sum(powers_of_two * y, axis=0).astype(np.int8)  # LCR pattern as number
+            y = np.vstack((x_shift_right, x, x_shift_left)).astype(np.int16)  # stack row-wise, shape (3, cols)
+            z = np.sum(powers_of_two * y, axis=0).astype(np.int16)  # LCR pattern as number
 
             return rule_binary[7 - z]
 
         def cellular_automaton(rule_number, size, steps,
                             init_cond='random', impulse_pos='center'):
-            """Generate the state of an elementary cellular automaton after a pre-determined
-            number of steps starting from some random state.
-
-            Args:
-                rule_number (int): the number of the update rule to use
-                size (int): number of cells in the row
-                steps (int): number of steps to evolve the automaton
-                init_cond (str): either `random` or `impulse`. If `random` every cell
-                in the row is activated with prob. 0.5. If `impulse` only one cell
-                is activated.
-                impulse_pos (str): if `init_cond` is `impulse`, activate the
-                left-most, central or right-most cell.
-
-            Returns:
-                np.array: final state of the automaton
-            """
-            assert 0 <= rule_number <= 1000000
+            assert 0 <= rule_number <= 256
             assert init_cond in ['random', 'impulse']
             assert impulse_pos in ['left', 'center', 'right']
             
             rule_binary_str = np.binary_repr(rule_number, width=8)
-            rule_binary = np.array([int(ch) for ch in rule_binary_str], dtype=np.in16)
+            rule_binary = np.array([int(ch) for ch in rule_binary_str], dtype=np.int8)
             x = np.zeros((steps, size), dtype=np.int8)
             
             if init_cond == 'random':  # random init of the first step
@@ -131,11 +111,12 @@ while x_count < 10000:
         file = open("REC.txt",'a')
         file.writelines(str(collection)+str(x_count+1)+' - Rule #'+str(rule_number)+' - Skin #'+str(color_skinz)+" - Initcond #"+str(init_cond)+" - Position #"+str(impulse_pos)+" - \n")
         file.close()  
-        os.chdir("/Users/Jacob/Desktop/Cell_auto/Collection_1")
+        os.chdir("Collection_1/")
         anim = animation.FuncAnimation(fig, animate, frames=frames, interval=interval, blit=True)
         anim.save(str(collection)+str(x_count+1)+' Rule #'+str(rule_number)+' Skin #'+str(color_skinz)+" - Initcond #"+str(init_cond)+" - Position #"+str(impulse_pos)+'.gif', writer='Pillow')
         x_count+=1
     except Exception as EE:
+        print(EE)
         pass
 
 
