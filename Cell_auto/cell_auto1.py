@@ -8,10 +8,11 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 warnings.filterwarnings("ignore")
 
-powers_of_two = np.array([[4], [2], [1]])  # shape (3, 1)
+powers_of_two = np.array([[4], [2], [1]])  
 
 x_count = 0
-while x_count < 9999:
+y_count = 9999
+while x_count < y_count:
     try:
         current_path = os.getcwd()
         parent_directory = os.path.abspath(os.path.join(current_path, os.pardir))
@@ -19,28 +20,44 @@ while x_count < 9999:
             os.chdir(parent_directory)
 
         def step(x, rule_binary):
+            # Shift the array to the right and left to create a 3xN array
+            x_shift_right = np.roll(x, 1)
+            x_shift_left = np.roll(x, -1)
+            y = np.vstack((x_shift_right, x, x_shift_left)).astype(np.int8)
+            # Compute the sum of each row weighted by powers of 2
+            # This gives a decimal number between 0 and 7 for each triplet of values
+            z = np.sum(powers_of_two * y, axis=0)
+            # Compute the index of the rule to apply based on the decimal numbers
+            # Subtract the decimal numbers from 7 to reverse their order
+            rule_index = 7 - z
+            # Use rule_binary as a lookup table to get the new values
+            # This works because rule_binary is a binary number with 8 bits
+            # and the bits correspond to the possible values of z
+            # The bits in rule_binary are ordered from left to right
+            # so they correspond to the values of z in reverse order
+            return np.unpackbits(np.array([rule_binary], dtype=np.uint8))[rule_index]
 
-            x_shift_right = np.roll(x,  1)  # circular shift to right <3 kan edits
-            x_shift_left = np.roll(x, -1)  # circular shift to left <3 kan edits
-            y = np.vstack((x_shift_right, x, x_shift_left)).astype(np.int16)  # stack row-wise, shape (3, cols)
-            z = np.sum(powers_of_two * y, axis=0).astype(np.int16)  # LCR pattern as number
 
-            return rule_binary[7 - z]
-
-        def cellular_automaton(rule_number, size, steps,
-                            init_cond='random', impulse_pos='center'):
+        def cellular_automaton(rule_number: int, size: int, steps: int,
+                                init_cond: str = 'random', impulse_pos: str = 'center') -> np.ndarray:
+            # Ensure arguments are valid
             assert 0 <= rule_number <= 256
             assert init_cond in ['random', 'impulse']
             assert impulse_pos in ['left', 'center', 'right']
             
+            # Convert rule number to binary array
             rule_binary_str = np.binary_repr(rule_number, width=8)
             rule_binary = np.array([int(ch) for ch in rule_binary_str], dtype=np.int8)
+            
+            # Initialize grid of zeros
             x = np.zeros((steps, size), dtype=np.int8)
             
-            if init_cond == 'random':  # random init of the first step
-                x[0, :] = np.array(np.random.rand(size) < 0.5, dtype=np.int8)
+            # Random initialization of the first step
+            if init_cond == 'random':
+                x[0, :] = np.array(np.random.randint(2, size=size), dtype=np.int8)
 
-            if init_cond == 'impulse':  # starting with an initial impulse
+            # Starting with an initial impulse
+            if init_cond == 'impulse':
                 if impulse_pos == 'left':
                     x[0, 0] = 1
                 elif impulse_pos == 'right':
@@ -48,38 +65,37 @@ while x_count < 9999:
                 else:
                     x[0, size // 2] = 1
             
+            # Iterate over steps and apply the step function to each row
             for i in range(steps - 1):
                 x[i + 1, :] = step(x[i, :], rule_binary)
             
             return x
 
+
+        # Set up the parameters for the cellular automaton
         random_x = random.randint(1,256)
         empte_array = []
         if random_x in empte_array:
-            while random_x in empte_array:
-                random_x = random.randint(1,256)
-
+            random_x = random.randint(1,256)
+        
         empte_array.append(random_x)
 
-        rule_number = random_x # select the update rule <3
-        size = 100  # number of cells in one row -- <3 Brede
-        steps = 400 # number of time steps --  <3 Length 
-        init_cond_array = ['random', 'impulse']
-        init_cond_rand = random.randint(0,1)
-        init_cond=init_cond_array[init_cond_rand]  # start with only one cell  <3  ['random', 'impulse']
-        
-        impulse_pos_array = ['left', 'right', 'center']
-        impulse_pos_rand = random.randint(0,2)
+        rule_number = random_x
+        size = 100
+        steps = 400
+        init_cond = random.choice(['random', 'impulse'])
+        impulse_pos = random.choice(['left', 'right', 'center'])
 
-        impulse_pos=impulse_pos_array[impulse_pos_rand]  # start with the central cell <3 -- left - right - center
-
+        # Generate the cellular automaton using the specified parameters
         x = cellular_automaton(rule_number, size, steps, init_cond, impulse_pos)
 
-        steps_to_show = 100  # number of steps to show in the animation window <3 Skala
-        iterations_per_frame = 3  # how many steps to show per frame - <3 Speed
-        frames = int(steps // iterations_per_frame)  # number of frames in the animation
-        interval=50  # interval in ms between consecutive frames -- <3 Speed
+        # Set up parameters for the animation of the cellular automaton
+        steps_to_show = 100
+        iterations_per_frame = 3
+        frames = int(steps // iterations_per_frame)
+        interval = 50
 
+        # Set up the figure and axes for the animation
         fig = plt.figure(figsize=(10, 10))
         ax = plt.axes()
         ax.set_axis_off()
@@ -89,32 +105,46 @@ while x_count < 9999:
         color_skinz=skinz[rand_x]
 
         def animate(i):
-            ax.clear()  # clear the plot
-            ax.set_axis_off()
+            ax.clear()  # clear the axes before drawing the next frame
+            ax.set_axis_off()  # turn off the axis
             
-            Y = np.zeros((steps_to_show, size), dtype=np.int8)  # initialize with all zeros
-            upper_boundary = (i + 1) * iterations_per_frame  # window upper boundary
-            lower_boundary = 0 if upper_boundary <= steps_to_show else upper_boundary - steps_to_show  # window lower bound.
-            print("Working #"+str(x_count+1))
-            for t in range(lower_boundary, upper_boundary):  # assign the values
+            # create an empty array for the current frame
+            Y = np.zeros((steps_to_show, size), dtype=np.int8)  
+            
+            # compute the upper and lower boundaries for the current frame
+            upper_boundary = (i + 1) * iterations_per_frame 
+            lower_boundary = 0 if upper_boundary <= steps_to_show else upper_boundary - steps_to_show 
+            
+            # loop over the time steps in the current frame and copy the state of the cells into Y
+            for t in range(lower_boundary, upper_boundary):  
                 Y[t - lower_boundary, :] = x[t, :]
             
-            #img = ax.imshow(Y, interpolation='none',cmap='RdPu')
+            # create an image of the current frame using the selected color map
             img = ax.imshow(Y, interpolation='none',cmap=color_skinz)
-            #plt.gcf().text(0.5, 0.1, 'by Jacob Thordal', fontsize=12, fontfamily='Verdana')
+            
+            # return the image
             return [img]
+
             
         t = time.localtime()
         current_time = time.strftime("%H:%M:%S", t)
         # call the animator
         collection = "Cellular Automata #"
+
+  
+        cur_path=os.getcwd()
+        if "Cell_auto" not in cur_path:
+            os.chdir("Cell_auto/Collection_1/")
+        else:
+            os.chdir("Collection_1/")
+
         file = open("REC.txt",'a')
         file.writelines(str(collection)+str(x_count+1)+' - Rule #'+str(rule_number)+' - Skin #'+str(color_skinz)+" - Initcond #"+str(init_cond)+" - Position #"+str(impulse_pos)+" - \n")
-        file.close()  
-        os.chdir("Collection_1/")
+        file.close() 
         anim = animation.FuncAnimation(fig, animate, frames=frames, interval=interval, blit=True)
         anim.save(str(collection)+str(x_count+1)+' Rule #'+str(rule_number)+' Skin #'+str(color_skinz)+" - Initcond #"+str(init_cond)+" - Position #"+str(impulse_pos)+'.gif', writer='Pillow')
         x_count+=1
+        print(str(x_count)+" out of "+str(y_count))
     except Exception as EE:
         print(EE)
         pass
