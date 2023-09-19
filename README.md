@@ -47,4 +47,9 @@ The script allows you to configure various parameters, including:
 4. init_cond: The initialization condition ('random' or 'impulse').
 5. impulse_pos: The position of the impulse ('left', 'right', or 'center').
 
+## Output
+
+https://github.com/ThordalEnterprise/Cellular_automaton_generator_in_ternimal/assets/59783217/39a51249-57b2-448e-8ca4-1964354e94b9
+
+
 
