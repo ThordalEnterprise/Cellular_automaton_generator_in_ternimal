@@ -1,9 +1,50 @@
-# Cellular_automaton_generator_in_ternimal
+# Cellular Automaton Image Generator
 
-- In cellular automata, a rule is a set of instructions that determine how the state of a cell in the grid will change based on the state of its neighboring cells. The "rule value" is a number that represents the specific set of instructions for a particular cellular automaton.
+This Python script generates a series of animated GIFs using cellular automata. The generated animations represent various states of the automaton with different configurations and visual styles.
 
-- The Initcond phrase, also known as the initial condition phrase, refers to the initial state of the cells in a cellular automaton. This phrase typically defines the starting configuration of the cells, which can be set randomly or according to a specific pattern. The initial condition is used as the starting point for the automaton's evolution, and can have a significant impact on the final outcome of the simulation.
+## Description
 
-- In cellular automata, the impulse position refers to the specific location or cell in the initial configuration of the automaton where a change or "impulse" is applied. This impulse is typically used to initiate the evolution of the automaton and can take the form of a change in the state of a single cell or a group of cells. The impulse position can also be thought of as the seed for the automaton's evolution. In some cases, the impulse position may be a randomly chosen cell or a user-specified location.
+The script uses cellular automaton rules to simulate the evolution of a grid of cells over a specified number of time steps. Each frame of the animation represents a different state of the grid, creating visually intriguing patterns and structures.
 
-- The color Map in cellular automata refers to the way in which the different states of the cells are represented visually. Typically, each state is assigned a unique color, and the cells are colored according to their current state. The color Map can be chosen based on the specific application or desired visual representation. It can be set to any color Map. The color Map is used to visualize the pattern of states of the cells in the grid over time.
+## Features
+
+- **Customization**: You can specify the number of images you want to generate, allowing you to create a series of animations.
+
+- **Random Configurations**: The script randomly selects parameters such as rule numbers, grid sizes, initialization conditions, and impulse positions to create diverse animations.
+
+- **Colorful Animations**: It offers a wide range of color schemes to make your animations visually appealing.
+
+- **Data Logging**: The script logs information about each animation, including the rule number, color scheme, initialization condition, and position, into a `REC.txt` file.
+
+## Dependencies
+
+The script relies on the following Python libraries:
+
+- `numpy`: For numerical operations and array handling.
+- `selenium`: For web automation (not used).
+- `matplotlib`: For generating animations and visualizations.
+
+## Usage
+
+1. Clone or download the repository to your local machine.
+
+2. Install the required libraries by running:
+
+   ```shell
+   pip install numpy matplotlib
+
+3. Run the script and specify the number of images you want to generate when prompted.
+
+4. The script will create a series of animated GIFs in the "Collection_1" folder, each with a unique configuration and visual style.
+
+## Configuration
+
+The script allows you to configure various parameters, including:
+
+1. rule_number: The rule number for the cellular automaton.
+2. size: The width of the automaton grid.
+3. steps: The number of time steps to simulate.
+4. init_cond: The initialization condition ('random' or 'impulse').
+5. impulse_pos: The position of the impulse ('left', 'right', or 'center').
+
+
