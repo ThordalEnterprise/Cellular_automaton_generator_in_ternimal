@@ -1,5 +1,0 @@
-Cellular Automata #1 - Rule #19 - Skin #tab20c_r - Initcond #random - Position #center - 
-Cellular Automata #1 - Rule #150 - Skin #gray - Initcond #impulse - Position #left - 
-Cellular Automata #2 - Rule #161 - Skin #bwr_r - Initcond #random - Position #right - 
-Cellular Automata #3 - Rule #68 - Skin #RdYlGn - Initcond #impulse - Position #right - 
-Cellular Automata #4 - Rule #151 - Skin #twilight_shifted_r - Initcond #impulse - Position #left - 
