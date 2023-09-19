@@ -10,8 +10,11 @@ warnings.filterwarnings("ignore")
 
 powers_of_two = np.array([[4], [2], [1]])  
 
+num_iterations = int(input("How many images do you want to generate? "))
+
+
 x_count = 0
-y_count = 9999
+y_count = num_iterations
 while x_count < y_count:
     try:
         current_path = os.getcwd()
@@ -134,7 +137,7 @@ while x_count < y_count:
   
         cur_path=os.getcwd()
         if "Cell_auto" not in cur_path:
-            os.chdir("Cell_auto/Collection_1/")
+            os.chdir("Collection_1/")
         else:
             os.chdir("Collection_1/")
 
